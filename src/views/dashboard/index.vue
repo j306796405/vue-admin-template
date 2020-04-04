@@ -1,6 +1,11 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-text">name: {{ name }}</div>
+    <div class="dashboard-text">
+      name: {{ name }}
+      <svg class="icon" aria-hidden="true">
+        <use xlink:href="#iconplay"></use>
+      </svg>
+    </div>
   </div>
 </template>
 

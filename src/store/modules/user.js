@@ -1,12 +1,14 @@
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
+import dynamicRoutes from '@/router/dynamicRoutes'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    avatar: ''
+    avatar: '',
+    routes: []
   }
 }
 
@@ -24,6 +26,9 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_ROUTES: (state, routes) => {
+    state.routes = routes
   }
 }
 
@@ -53,11 +58,13 @@ const actions = {
           reject('Verification failed, please Login again.')
         }
 
-        const { name, avatar } = data
+        const { info, info: { name, avatar }, routes = [] } = data
+        const mergedRoutes = generateRoutes(dynamicRoutes, routes)
 
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
-        resolve(data)
+        commit('SET_ROUTES', mergedRoutes)
+        resolve(info)
       }).catch(error => {
         reject(error)
       })
@@ -86,6 +93,29 @@ const actions = {
       resolve()
     })
   }
+}
+
+// 路由生成
+function generateRoutes(localRoutes, userRoutes) {
+  const routes = []
+  for (let iIndex = 0; iIndex < userRoutes.length; iIndex++) {
+    const userRoute = userRoutes[iIndex]
+    for (let jIndex = 0; jIndex < localRoutes.length; jIndex++) {
+      const dynamicRoute = localRoutes[jIndex]
+      if (dynamicRoute.meta && userRoute.name === dynamicRoute.meta.name) {
+        const route = {
+          ...dynamicRoute
+        }
+
+        if (userRoute.children) {
+          route.children = generateRoutes(dynamicRoute.children, userRoute.children)
+        }
+        routes.push(route)
+        break
+      }
+    }
+  }
+  return routes
 }
 
 export default {

@@ -33,8 +33,9 @@ router.beforeEach(async(to, from, next) => {
         try {
           // get user info
           await store.dispatch('user/getInfo')
-
-          next()
+          console.log(store.getters.routes)
+          router.addRoutes(store.getters.routes) // 动态添加可访问路由表
+          next({ ...to, replace: true })
         } catch (error) {
           // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')

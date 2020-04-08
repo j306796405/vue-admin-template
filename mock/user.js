@@ -1,4 +1,3 @@
-
 const tokens = {
   admin: {
     token: 'admin-token'
@@ -65,7 +64,54 @@ export default [
 
       return {
         code: 20000,
-        data: info
+        data: {
+          info,
+          routes: [
+            {
+              name: 'dashboard',
+              children: [{
+                name: 'dashboard-index'
+              }]
+            },
+            {
+              name: 'example',
+              children: [
+                {
+                  name: 'example-table'
+                },
+                {
+                  name: 'example-tree'
+                }
+              ]
+            },
+            {
+              name: 'form',
+              children: [
+                {
+                  name: 'form-index'
+                }
+              ]
+            },
+            {
+              name: 'nested',
+              children: [
+                {
+                  name: 'nested-menu1',
+                  children: [
+                    { name: 'nested-menu1-menu1-1' },
+                    {
+                      name: 'nested-menu1-menu1-2',
+                      children: [
+                        { name: 'nested-menu1-menu1-2-menu1-2-1' },
+                        { name: 'nested-menu1-menu1-2-menu1-2-2' }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
       }
     }
   },
